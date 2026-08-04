@@ -1,0 +1,4 @@
+environment = "dev"
+location = "centralindia"
+name_prefix = "vexardrive"
+image = "example.azurecr.io/fleet-ping:replace-me"
