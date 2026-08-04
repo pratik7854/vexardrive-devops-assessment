@@ -1,0 +1,36 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      NODE_ENV: development
+      PORT: 8080
+      DATABASE_URL: postgresql://vexarapp:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/vexar_fleet
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      JWT_ISSUER: vexardrive-fleet-ping
+      JWT_AUDIENCE: vexardrive-clients
+      OTP_TEST_CODE: ${OTP_TEST_CODE:?set OTP_TEST_CODE in .env}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16.8-alpine
+    environment:
+      POSTGRES_USER: vexarapp
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: vexar_fleet
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    expose:
+      - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vexarapp -d vexar_fleet"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:

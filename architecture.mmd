@@ -1,0 +1,12 @@
+flowchart LR
+  V["Vehicles / mobile clients"] -->|"HTTPS + JWT/mTLS when supported"| FD["Azure Front Door + WAF"]
+  FD --> CA["Container Apps ingress\nFleet Ping API"]
+  subgraph vnet["Spoke VNet"]
+    CA -->|"private DNS + TLS"| PG["Azure Database for PostgreSQL\nFlexible Server"]
+    CA -->|"managed identity"| KV["Key Vault\nprivate endpoint"]
+  end
+  CA --> LA["Log Analytics + Application Insights"]
+  PG --> B["Automated backups / PITR"]
+  GH["GitHub Actions\nOIDC"] --> ACR["Azure Container Registry"]
+  ACR --> CA
+  GH -->|"Terraform"| AZ["Azure control plane"]

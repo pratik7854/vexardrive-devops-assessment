@@ -1,0 +1,13 @@
+.git
+.github
+node_modules
+npm-debug.log*
+coverage
+.env
+.env.*
+!.env.example
+terraform
+*.tfstate
+*.tfvars
+README.md
+TECHNICAL_REPORT.md
